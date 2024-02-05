@@ -1,4 +1,4 @@
-from . import database
+import database
 from sqlalchemy.orm import Session
 
 
