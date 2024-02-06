@@ -2,7 +2,7 @@ from  fastapi import Depends
 from sqlalchemy.orm import Session
 from app.users.model import User
 from app.users.dto import UserDTO
-from app.db.dependencies import get_db
+from app.db.session import get_db
 
 
 class UserRepo:

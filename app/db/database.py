@@ -9,7 +9,7 @@ load_dotenv('.env')
 
 db_url = os.environ['DATABASE_URL']
 
-engine = create_engine(db_url)
+engine = create_engine(db_url, echo=True)
 
 SessionLocal = sessionmaker(bind=engine)
 

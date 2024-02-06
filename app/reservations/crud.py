@@ -2,7 +2,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from app.reservations.model import Reservation
 from app.reservations.dto import ReservationDTO
-from app.db.dependencies import get_db
+from app.db.session import get_db
 
 
 class ReservationRepo:

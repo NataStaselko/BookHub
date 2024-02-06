@@ -10,4 +10,4 @@ class Author(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     avatar = Column(String)
-    books = relationship('Book')
+    books = relationship('Book', lazy="noload")
