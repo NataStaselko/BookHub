@@ -9,6 +9,7 @@ class AutorDTO(BaseModel):
     class Config:
         from_attributes = True
 
+
 class AuthorResponse(BaseModel):
     id: int
     first_name: str
