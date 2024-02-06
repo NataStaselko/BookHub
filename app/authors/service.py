@@ -11,10 +11,10 @@ class AuthorService:
     def create_author(self, author_dto: AutorDTO):
         return self.crud.create(author_dto)
 
-    def get_author_by_id(self, author_dto: int):
-        return self.crud.find(author_dto)
+    def get_author_by_id(self, author_id: int):
+        return self.crud.find(author_id)
 
-    def get_authors(self, skip, limit):
+    def get_authors(self, skip: int, limit: int):
         return self.crud.find_all(skip, limit)
 
     def update_author(self, author_id: int, author_dto: AutorDTO):

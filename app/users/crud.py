@@ -1,4 +1,4 @@
-from  fastapi import Depends
+from fastapi import Depends
 from sqlalchemy.orm import Session
 from app.users.model import User
 from app.users.dto import UserDTO
