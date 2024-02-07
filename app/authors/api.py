@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi.responses import JSONResponse
 from typing import List
 from pydantic import parse_obj_as
 from app.authors.dto import AutorDTO, AuthorResponse
@@ -48,3 +49,4 @@ async def delete_author(author_id: int, service: AuthorService = Depends()):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f'Author with id = {author_id} not found'
         )
+    return JSONResponse(content={'message': f'Author whit id = {author_id} deleted successfully'})

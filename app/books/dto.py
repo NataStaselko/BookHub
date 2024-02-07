@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import List
 from app.authors.dto import AuthorResponse
 from app.genres.dto import GenreResponse
-from app.reservations.dto import ReservationResponse
+from app.reservations.dto import ReservationResponseByBook
 
 
 class BookDTO(BaseModel):
@@ -25,9 +25,8 @@ class BookResponse(BaseModel):
     num_pages: int
     author: AuthorResponse
     genres: List[GenreResponse]
-    reservations: List[ReservationResponse]
+    reservations: List[ReservationResponseByBook]
     is_available: bool
 
     class Config:
         from_attributes = True
-

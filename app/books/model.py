@@ -13,5 +13,5 @@ class Book(Base):
     num_pages = Column(Integer, nullable=False)
     author_id = Column(Integer, ForeignKey('authors.id'), nullable=False)
     genres = relationship('Genre', secondary=book_genre_association, back_populates='books', lazy="noload")
-    reservations = relationship('Reservation')
+    reservations = relationship('Reservation', lazy="noload")
     is_available = Column(Boolean, nullable=False, default=True)

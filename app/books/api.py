@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 from typing import List
 from pydantic import parse_obj_as
 from app.books.dto import BookDTO, BookResponse
 from app.books.service import BookService
 
 
+app = FastAPI()
 router_books = APIRouter(prefix='/books', tags=['books'])
 
 
@@ -49,6 +51,7 @@ async def delete_book(book_id: int, service: BookService = Depends()):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f'Book with id = {book_id} not found'
         )
+    return JSONResponse(content={'message': f'Book whit id = {book_id} deleted successfully'})
 
 
 @router_books.get('/filter', response_model=List[BookResponse], status_code=status.HTTP_200_OK)

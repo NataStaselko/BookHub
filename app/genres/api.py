@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi.responses import JSONResponse
 from typing import List
 from pydantic import parse_obj_as
 from app.genres.dto import GenreDTO, GenreResponse
@@ -49,3 +50,4 @@ async def delete_genre(genre_id: int, service: GenreService = Depends()):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f'Genre with id = {genre_id} not found'
         )
+    return JSONResponse(content={'message': f'Genre whit id = {genre_id} deleted successfully'})

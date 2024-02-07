@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi.responses import JSONResponse
 from typing import List
 from pydantic import parse_obj_as
 from app.users.dto import UserDTO, UserResponse
@@ -48,3 +49,4 @@ async def delete_user(user_id: int, service: UserService = Depends()):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f'User with id = {user_id} not found'
         )
+    return JSONResponse(content={'message': f'User whit id = {user_id} deleted successfully'})
