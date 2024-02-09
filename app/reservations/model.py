@@ -12,4 +12,4 @@ class Reservation(Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     time_start = Column(DateTime(timezone=True), server_default=func.now())
     time_end = Column(DateTime(timezone=True), server_default=func.now() + timedelta(days=10))
-    isActive = Column(Boolean, default=True)
+    is_active = Column(Boolean, default=True)

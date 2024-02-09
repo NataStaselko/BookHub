@@ -1,12 +1,11 @@
 from pydantic import BaseModel
 from decimal import Decimal
-from typing import List
+from typing import List, Optional
 from app.authors.dto import AuthorResponse
 from app.genres.dto import GenreResponse
-from app.reservations.dto import ReservationResponseByBook
 
 
-class BookDTO(BaseModel):
+class BookDTOCreate(BaseModel):
 
     title: str
     price: Decimal
@@ -18,6 +17,18 @@ class BookDTO(BaseModel):
         from_attributes = True
 
 
+class BookDTOUpdate(BaseModel):
+
+    title: Optional[str] = None
+    price: Optional[Decimal] = None
+    num_pages: Optional[int] = None
+    author_id: Optional[int] = None
+    genres: Optional[List[int]] = None
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
 class BookResponse(BaseModel):
     id: int
     title: str
@@ -25,8 +36,8 @@ class BookResponse(BaseModel):
     num_pages: int
     author: AuthorResponse
     genres: List[GenreResponse]
-    reservations: List[ReservationResponseByBook]
     is_available: bool
 
     class Config:
+
         from_attributes = True

@@ -2,15 +2,26 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.books.model import Book
-from app.books.dto import BookDTO
+from app.genres.model import Genre
+from app.books.dto import BookDTOCreate, BookDTOUpdate
+import logging
 
 
 class BookRepo:
+    logging.basicConfig(level=logging.DEBUG)
+
     def __init__(self, db: Session = Depends(get_db)):
         self.db = db
 
-    def create(self, book_dto: BookDTO):
-        book_db = Book(**book_dto.dict())
+    def create(self, book_dto: BookDTOCreate):
+        genres = [self.db.query(Genre).filter(Genre.id == genre_id).first() for genre_id in book_dto.genres]
+        book_db = Book(
+            title=book_dto.title,
+            price=book_dto.price,
+            num_pages=book_dto.num_pages,
+            author_id=book_dto.author_id,
+            genres=genres
+        )
         self.db.add(book_db)
         self.db.commit()
         self.db.refresh(book_db)
@@ -40,10 +51,19 @@ class BookRepo:
 
         return query.offset(skip).limit(limit).all()
 
-    def update(self, book_id: int, book_dto: BookDTO):
+    def update(self, book_id: int, book_dto: BookDTOUpdate):
         book_db = self.db.query(Book).filter(Book.id == book_id).first()
         for key, value in book_dto.dict(exclude_unset=True).items():
-            setattr(book_db, key, value)
+            if value is not None:
+                if key == 'genres':
+                    book_db.genres.clear()
+                    for genre_id in value:
+                        genre = self.db.query(Genre).filter(Genre.id == int(genre_id)).first()
+                        if genre:
+                            book_db.genres.append(genre)
+
+                else:
+                    setattr(book_db, key, value)
         self.db.commit()
         self.db.refresh(book_db)
         return book_db

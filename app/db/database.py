@@ -19,5 +19,6 @@ Base: DeclarativeMeta = declarative_base()
 def connect():
     Base.metadata.create_all(bind=engine)
 
+
 def disconnect():
     engine.dispose()

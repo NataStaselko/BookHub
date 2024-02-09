@@ -2,14 +2,14 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.responses import JSONResponse
 from typing import List
 from pydantic import parse_obj_as
-from app.users.dto import UserDTO, UserResponse
+from app.users.dto import UserDTOCreate, UserResponse, UserDTOUpdate
 from app.users.service import UserService
 
 router_users = APIRouter(prefix='/users', tags=['users'])
 
 
 @router_users.post('/', response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def create_user(user_dto: UserDTO, service: UserService = Depends()):
+async def create_user(user_dto: UserDTOCreate, service: UserService = Depends()):
     user = service.create_user(user_dto)
     return UserResponse.from_orm(user)
 
@@ -32,7 +32,7 @@ async def get_list_users(skip: int = 0, limit: int = 10, service: UserService = 
 
 
 @router_users.put('/{user_id}', response_model=UserResponse, status_code=status.HTTP_200_OK)
-async def update_user(user_id: int, user_dto: UserDTO, service: UserService = Depends()):
+async def update_user(user_id: int, user_dto: UserDTOUpdate, service: UserService = Depends()):
     user = service.update_user(user_id, user_dto)
     if user is None:
         raise HTTPException(

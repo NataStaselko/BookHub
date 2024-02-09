@@ -2,14 +2,14 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.responses import JSONResponse
 from typing import List
 from pydantic import parse_obj_as
-from app.authors.dto import AutorDTO, AuthorResponse
+from app.authors.dto import AutorDTOCreate, AuthorResponse, AutorDTOUpdate
 from app.authors.service import AuthorService
 
 router_authors = APIRouter(prefix='/authors', tags=['authors'])
 
 
 @router_authors.post('/', response_model=AuthorResponse, status_code=status.HTTP_201_CREATED)
-async def create_author(author_dto: AutorDTO, service: AuthorService = Depends()):
+async def create_author(author_dto: AutorDTOCreate, service: AuthorService = Depends()):
     author = service.create_author(author_dto)
     return AuthorResponse.from_orm(author)
 
@@ -32,7 +32,7 @@ async def get_list_authors(skip: int = 0, limit: int = 10, service: AuthorServic
 
 
 @router_authors.put('/{author_id}', response_model=AuthorResponse, status_code=status.HTTP_200_OK)
-async def update_author(author_id: int, author_dto: AutorDTO, service: AuthorService = Depends()):
+async def update_author(author_id: int, author_dto: AutorDTOUpdate, service: AuthorService = Depends()):
     author = service.update_author(author_id, author_dto)
     if author is None:
         raise HTTPException(

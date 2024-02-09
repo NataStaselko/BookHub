@@ -12,6 +12,6 @@ class Book(Base):
     price = Column(Numeric(precision=10, scale=2), nullable=False)
     num_pages = Column(Integer, nullable=False)
     author_id = Column(Integer, ForeignKey('authors.id'), nullable=False)
-    genres = relationship('Genre', secondary=book_genre_association, back_populates='books', lazy="noload")
-    reservations = relationship('Reservation', lazy="noload")
+    genres = relationship('Genre', secondary=book_genre_association, back_populates='books')
+    reservations = relationship('Reservation')
     is_available = Column(Boolean, nullable=False, default=True)

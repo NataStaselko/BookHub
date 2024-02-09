@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.responses import JSONResponse
 from typing import List
 from pydantic import parse_obj_as
-from app.genres.dto import GenreDTO, GenreResponse
+from app.genres.dto import GenreDTOCreate, GenreResponse, GenreDTOUpdate
 from app.genres.service import GenreService
 
 
@@ -10,7 +10,7 @@ router_genres = APIRouter(prefix='/genres', tags=['genres'])
 
 
 @router_genres.post('/', response_model=GenreResponse, status_code=status.HTTP_201_CREATED)
-async def create_genre(genre_dto: GenreDTO, service: GenreService = Depends()):
+async def create_genre(genre_dto: GenreDTOCreate, service: GenreService = Depends()):
     genre = service.create_genre(genre_dto)
     return GenreResponse.from_orm(genre)
 
@@ -33,7 +33,7 @@ async def get_list_genres(skip: int = 0, limit=10, service: GenreService = Depen
 
 
 @router_genres.put('/{genre_id}', response_model=GenreResponse, status_code=status.HTTP_200_OK)
-async def update_genre(genre_id: int, genre_dto: GenreDTO, service: GenreService = Depends()):
+async def update_genre(genre_id: int, genre_dto: GenreDTOUpdate, service: GenreService = Depends()):
     genre = service.update_genre(genre_id, genre_dto)
     if genre is None:
         raise HTTPException(

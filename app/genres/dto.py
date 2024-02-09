@@ -1,11 +1,19 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
-class GenreDTO(BaseModel):
+class GenreDTOCreate(BaseModel):
     name: str
 
     class Config:
         from_attributes = True
+
+
+class GenreDTOUpdate(BaseModel):
+    name: Optional[str] = None
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class GenreResponse(BaseModel):
@@ -14,3 +22,4 @@ class GenreResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
