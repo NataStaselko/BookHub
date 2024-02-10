@@ -1,8 +1,5 @@
 from pydantic import BaseModel
 from decimal import Decimal
-from typing import List
-from app.authors.dto import AuthorResponse
-from app.genres.dto import GenreResponse
 
 
 class BookResponseByReservation(BaseModel):

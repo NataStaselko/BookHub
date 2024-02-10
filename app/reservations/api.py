@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.responses import JSONResponse
 from typing import List
-from pydantic import parse_obj_as
 from app.reservations.dto import ReservationDTCreate, ReservationResponse
 from app.reservations.service import ReservationService
 
@@ -36,6 +35,7 @@ async def get_list_reservations(skip: int = 0, limit=10, service: ReservationSer
 
 # Этот запрос обновляет поле is_active на False в сущности Reservation
 # меняется поле is_available в Book на True
+
 @router_reservations.put('/{reservation_id}', response_model=ReservationResponse, status_code=status.HTTP_200_OK)
 async def update_reservation(reservation_id: int, service: ReservationService = Depends()):
     reservation = service.update_reservation(reservation_id)
