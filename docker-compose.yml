@@ -11,6 +11,11 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_NAME}", "-U", "${DB_USER}" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
 
   pgadmin:
     container_name: pgadmin
@@ -21,18 +26,80 @@ services:
     ports:
       - "5050:80"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   app:
     container_name: app
     build: .
-    command: /app/entrypoint.sh
+    command: bash -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     volumes:
       - .:/app
       - ./alembic.ini:/app/alembic.ini
       - ./alembic:/app/alembic
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: always
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  celery_worker:
+    container_name: celery_worker
+    build: .
+    command: celery -A app.tasks worker --loglevel=info
+    volumes:
+      - .:/app
+      - ./alembic.ini:/app/alembic.ini
+      - ./alembic:/app/alembic
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+    depends_on:
+      - app
+      - redis
+    restart: always
+
+  celery_beat:
+    container_name: celery-beat
+    build: .
+    command: celery -A app.tasks beat --loglevel=info
+    volumes:
+      - .:/app
+      - ./alembic.ini:/app/alembic.ini
+      - ./alembic:/app/alembic
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+    depends_on:
+      - app
+      - redis
+    restart: always
+
+  flower:
+    container_name: flower
+    build: .
+    command: celery -A app.tasks flower
+    volumes:
+      - ./alembic.ini:/app/alembic.ini
+      - ./alembic:/app/alembic
+    ports:
+      - "5555:5555"
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - app
+      - redis
+      - celery_worker
+      - celery_beat
